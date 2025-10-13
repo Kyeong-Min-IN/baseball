@@ -301,16 +301,16 @@ const TeamSetupPage = () => {
         <h1 className="team-setup-title">팀 설정 & 이닝 선택</h1>
         <p className="team-setup-subtitle">게임을 시작하기 전에 팀과 선수를 선택하세요</p>
       </div>
-      
+
       <div className="team-setup-content">
 
         <div className="setup-section">
           <h2 className="section-title">게임 설정</h2>
-          
+
           <div className="form-group">
             <label className="form-label">총 이닝</label>
             <select className="form-select" value={inningCount} onChange={e => setInningCount(Number(e.target.value))}>
-              {Array.from({ length: 7 }, (_, i) => i + 3).map(n => (
+              {Array.from({ length: 9 }, (_, i) => i + 1).map(n => (
                 <option key={n} value={n}>{n} 이닝</option>
               ))}
             </select>
@@ -330,29 +330,29 @@ const TeamSetupPage = () => {
           <div className="setup-section">
             <h2 className="section-title">사용자 팀 선수 목록 ({userTeam})</h2>
             <div className="player-list">
-            {userBatters.map(player => {
-              const isSelected = userBattingOrder.find(p => p.Player_ID === player.Player_ID);
-              return (
-                <button
-                  key={`${userTeam}-${player.Player_ID}`}
-                  className={`player-button ${isSelected ? 'selected' : ''}`}
-                  onClick={() => {
-                    if (isSelected) {
-                      setUserBattingOrder(userBattingOrder.filter(p => p.Player_ID !== player.Player_ID));
-                    } else {
-                      if (userBattingOrder.length < 9) {
-                        setUserBattingOrder([...userBattingOrder, player]);
+              {userBatters.map(player => {
+                const isSelected = userBattingOrder.find(p => p.Player_ID === player.Player_ID);
+                return (
+                  <button
+                    key={`${userTeam}-${player.Player_ID}`}
+                    className={`player-button ${isSelected ? 'selected' : ''}`}
+                    onClick={() => {
+                      if (isSelected) {
+                        setUserBattingOrder(userBattingOrder.filter(p => p.Player_ID !== player.Player_ID));
                       } else {
-                        alert('타순은 최대 9명까지 선택 가능합니다.');
+                        if (userBattingOrder.length < 9) {
+                          setUserBattingOrder([...userBattingOrder, player]);
+                        } else {
+                          alert('타순은 최대 9명까지 선택 가능합니다.');
+                        }
                       }
-                    }
-                  }}
-                >
-                  {player.Player_Name}
-                </button>
-              );
-            })}
-          </div>
+                    }}
+                  >
+                    {player.Player_Name}
+                  </button>
+                );
+              })}
+            </div>
 
             {userBattingOrder.length > 0 && (
               <div className="batting-order">
