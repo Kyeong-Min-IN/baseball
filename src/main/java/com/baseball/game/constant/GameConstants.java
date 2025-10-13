@@ -7,7 +7,7 @@ public final class GameConstants {
     }
 
     // 게임 설정
-    public static final int MIN_INNINGS = 1;
+    public static final int MIN_INNINGS = 3;
     public static final int MAX_INNINGS = 9;
     public static final int MAX_OUTS = 3;
     public static final int MAX_STRIKES = 3;
