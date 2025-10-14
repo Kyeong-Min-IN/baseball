@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baseball.game.mapper.TeamLineupMapper">
+    
+    <!-- 팀별 사용 가능한 선수 목록 조회 (이름만) -->
+    <select id="findAvailablePlayersByTeamBatters" resultType="String">
+        <![CDATA[
+        SELECT Player_Name FROM kbo_hitter_stats_2024
+        WHERE Player_Team = #{teamName} and Game_Num > 60 
+        ORDER BY Player_Name
+        ]]>
+    </select>
+    
+    <select id="findAvailablePlayersByTeamPitchers" resultType="String">
+        <![CDATA[
+        SELECT Player_Name FROM kbo_pitcher_stats_2024
+        WHERE Player_Team = #{teamName} and Innings_Pitched > 50 and Game_Num <= 35 
+        ORDER BY Player_Name
+        ]]>
+    </select>
+    
+    <!-- 팀별 사용 가능한 타자 성적 데이터 조회 -->
+    <select id="findAvailableBattersByTeam" resultType="com.baseball.game.dto.Batter">
+        <![CDATA[
+        SELECT
+            Player_Name AS name,
+            Player_Team AS team,
+            Plate_Appearance AS plateAppearances,
+            Strike_out As strike_Out,
+            Four_Ball As four_Ball,
+            Hit_By_Pitch As hit_By_Pitch,
+            At_Bat AS atBats,
+            Hit AS hits,
+            two_Base AS twoBases,
+            three_Base AS threeBases,
+            Home_Run AS homeRuns,
+            ROUND(CAST(Hit AS FLOAT) / NULLIF(At_Bat, 0), 3) AS battingAverage
+        FROM kbo_hitter_stats_2024
+        WHERE Player_Team = #{teamName} and Game_Num > 60
+        ORDER BY Player_Name
+        ]]>
+    </select>
+    
+    <!-- 팀별 사용 가능한 투수 성적 데이터 조회 -->
+    <select id="findAvailablePitchersByTeam" resultType="com.baseball.game.dto.Pitcher">
+        <![CDATA[
+        SELECT
+            Player_Name AS name,
+            Player_Team AS team,
+            Innings_Pitched AS inningsPitched,
+            Strike_Out AS strikeouts,
+            Base_On_Balls AS walks,
+            Hit_By_Pitch AS hitByPitch,
+            Hits AS hits,
+            Earned_Run AS earnedRuns,
+            Earned_Run_Average AS era,
+            WHIP AS whip,
+            Total_Batters_Faced AS pitchersBattersFaced
+        FROM kbo_pitcher_stats_2024
+        WHERE Player_Team = #{teamName} and Innings_Pitched > 50 and Game_Num <= 35
+        ORDER BY Player_Name
+        ]]>
+    </select>
+    
+</mapper> 
