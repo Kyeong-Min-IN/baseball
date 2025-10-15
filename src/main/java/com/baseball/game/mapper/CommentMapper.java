@@ -10,7 +10,7 @@ public interface CommentMapper {
 
 	public void comment(CommentDto d);
 
-	public void delcom(int boardNo, int commentId);
+	public void delete(int boardNo, int commentId);
 
-	public void modify(int boardNo, int commentId, String text);
+	public void update(int boardNo, int commentId, String text);
 }

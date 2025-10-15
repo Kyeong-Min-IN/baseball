@@ -30,15 +30,15 @@ public class CommentController {
 			@PathVariable("boardNo") int boardNo,
 			@PathVariable("commentId") int commentId,
 			@RequestBody CommentDto d) {
-		service.modify(boardNo, commentId, d.getText());
+		service.update(boardNo, commentId, d.getText());
 		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{boardNo}/{commentId}")
-	public ResponseEntity<Void> delComment(
+	public ResponseEntity<Void> deleteComment(
 			@PathVariable("boardNo") int boardNo,
 			@PathVariable("commentId") int commentId) {
-		service.delcom(boardNo, commentId);
+		service.delete(boardNo, commentId);
 		return ResponseEntity.ok().build();
 	}
 }

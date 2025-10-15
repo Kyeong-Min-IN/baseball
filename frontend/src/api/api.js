@@ -2,9 +2,8 @@
 import axios from "axios";
 
 // --------- Axios 인스턴스 설정 ----------
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
-const isDevelopment = process.env.NODE_ENV === 'development';
-const API_BASE = isDevelopment ? "/api" : API_BASE_URL;
+// Docker 환경에서 브라우저가 백엔드에 접근할 때 호스트의 매핑된 포트 사용
+const API_BASE = "http://localhost:8080/api";
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -101,8 +100,8 @@ export const playerAPI = {
 
 // --------- 인증 API ----------
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
+  login: (credentials) => api.post('/login', credentials),
+  register: (userData) => api.post('/login/register', userData),
   logout: () => api.post('/auth/logout'),
   refresh: (refreshToken) => api.post('/auth/refresh', { refreshToken }),
 };

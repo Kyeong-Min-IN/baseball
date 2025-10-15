@@ -51,16 +51,16 @@ class CommentServiceImplTest {
     }
 
     @Test
-    @DisplayName("delcom - 매퍼 호출")
-    void delcom() {
-        commentService.delcom(3, 8);
-        verify(commentMapper, times(1)).delcom(3, 8);
+    @DisplayName("delete - 매퍼 호출")
+    void deleteComment() {
+        commentService.delete(3, 8);
+        verify(commentMapper, times(1)).delete(3, 8);
     }
 
     @Test
-    @DisplayName("modify - 매퍼 호출")
-    void modify() {
-        commentService.modify(2, 9, "t");
-        verify(commentMapper, times(1)).modify(eq(2), eq(9), eq("t"));
+    @DisplayName("update - 매퍼 호출")
+    void updateComment() {
+        commentService.update(2, 9, "t");
+        verify(commentMapper, times(1)).update(eq(2), eq(9), eq("t"));
     }
 }

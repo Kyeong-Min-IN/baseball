@@ -20,7 +20,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = CommentController.class)
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class CommentControllerTest {
 
     @Autowired
@@ -58,7 +64,7 @@ class CommentControllerTest {
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        verify(commentService, times(1)).modify(eq(2), eq(9), eq("upd"));
+        verify(commentService, times(1)).update(eq(2), eq(9), eq("upd"));
     }
 
     @Test
@@ -67,6 +73,6 @@ class CommentControllerTest {
         mockMvc.perform(delete("/api/comment/3/5"))
                 .andExpect(status().isOk());
 
-        verify(commentService, times(1)).delcom(3, 5);
+        verify(commentService, times(1)).delete(eq(3), eq(5));
     }
 }

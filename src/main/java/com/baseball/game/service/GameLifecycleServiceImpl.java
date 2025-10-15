@@ -143,7 +143,7 @@ public class GameLifecycleServiceImpl implements GameLifecycleService {
                 if (b != null && b.getName() != null) {
                     // 타율이 비어 있으면 계산값 반영
                     if (b.getAtBats() > 0 && (b.getBattingAverage() == 0.0)) {
-                        b.setBattingAverage(b.calculateBattingAverage());
+                        b.setBattingAverage(com.baseball.game.util.GameStatisticsUtil.calculateBattingAverage(b));
                     }
                     byName.put(b.getName(), b);
                 }
@@ -208,13 +208,13 @@ public class GameLifecycleServiceImpl implements GameLifecycleService {
                 try {
                     homeSP = homeSPName != null ? pitcherMapper.findByName(homeSPName) : null;
                 } catch (Throwable t) {
-                    log.warn("선발투수 DB 조회 실패(홈). 이름 기반 폴백을 사용합니다.", t);
+                    // log.warn("선발투수 DB 조회 실패(홈). 이름 기반 폴백을 사용합니다.", t);
                     homeSP = null;
                 }
                 try {
                     awaySP = awaySPName != null ? pitcherMapper.findByName(awaySPName) : null;
                 } catch (Throwable t) {
-                    log.warn("선발투수 DB 조회 실패(원정). 이름 기반 폴백을 사용합니다.", t);
+                    // log.warn("선발투수 DB 조회 실패(원정). 이름 기반 폴백을 사용합니다.", t);
                     awaySP = null;
                 }
             }

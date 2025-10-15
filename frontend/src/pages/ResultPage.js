@@ -9,9 +9,9 @@ const ResultPage = () => {
 
   const gameState = state?.gameState;
   const homeTeam =
-    state?.homeTeam || gameState?.homeTeam || "홈 팀";
-  const awayTeam =
-    state?.awayTeam || gameState?.awayTeam || "원정 팀";
+  state?.homeTeam || gameState?.homeTeam || "홈 팀";
+const awayTeam =
+  state?.awayTeam || gameState?.awayTeam || "원정 팀";
 
   const totalInnings = gameState?.inning || 9;
 
@@ -71,23 +71,23 @@ const ResultPage = () => {
         <h1 className="result-title">🏆 경기 결과</h1>
         <p className="result-subtitle">경기 결과를 확인하세요</p>
       </div>
-
+      
       <div className="result-content">
         <div className="winner-announcement">
           <p className="winner-text">{winner}</p>
         </div>
-
+        
         <div className="final-score">
           <h3>최종 점수</h3>
           <div className="score-display">
             <div className="team-score">
-              <div className="team-name">{awayTeam}</div>
-              <div className="team-score-value">{totalRuns(awayScores)}</div>
+              <div className="team-name">{homeTeam}</div>
+              <div className="team-score-value">{totalRuns(homeScores)}</div>
             </div>
             <div className="vs-text">vs</div>
             <div className="team-score">
-              <div className="team-name">{homeTeam}</div>
-              <div className="team-score-value">{totalRuns(homeScores)}</div>
+              <div className="team-name">{awayTeam}</div>
+              <div className="team-score-value">{totalRuns(awayScores)}</div>
             </div>
           </div>
         </div>
@@ -104,14 +104,14 @@ const ResultPage = () => {
             </thead>
             <tbody>
               <tr>
-                <td className="team-name-cell">{awayTeam}</td>
-                {awayScores.map((s, i) => <td key={i} className="stats-value">{s}</td>)}
-                <td className="stats-value">{totalRuns(awayScores)}</td>
-              </tr>
-              <tr>
                 <td className="team-name-cell">{homeTeam}</td>
                 {homeScores.map((s, i) => <td key={i} className="stats-value">{s}</td>)}
                 <td className="stats-value">{totalRuns(homeScores)}</td>
+              </tr>
+              <tr>
+                <td className="team-name-cell">{awayTeam}</td>
+                {awayScores.map((s, i) => <td key={i} className="stats-value">{s}</td>)}
+                <td className="stats-value">{totalRuns(awayScores)}</td>
               </tr>
             </tbody>
           </table>

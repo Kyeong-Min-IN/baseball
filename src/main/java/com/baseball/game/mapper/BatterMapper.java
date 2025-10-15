@@ -13,6 +13,9 @@ public interface BatterMapper {
     // 이름으로 타자 1명
     Batter findByName(@Param("name") String name);
 
+    // No로 타자 1명
+    Batter findByNo(@Param("no") int no);
+
     // 여러 이름으로 타자 리스트
     List<Batter> findByNames(@Param("names") List<String> names);
 }

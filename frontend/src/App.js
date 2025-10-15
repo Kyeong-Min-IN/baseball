@@ -7,7 +7,7 @@ import HomePage from './pages/HomePage';
 import KboPage from './pages/KboPage';
 import KboBoard from './pages/KboBoard';
 import KboBoardDetail from './pages/KboBoardDetail';
-import LoginPage from './pages/LoginPage';
+import LoginPage from './pages/loginpage.js';
 import ProfilePage from './pages/ProfilePage';
 import PostForm2 from './pages/PostForm2';
 import PostFormWithComments from './pages/PostFormWithComments';
@@ -18,7 +18,7 @@ import MainPage from './pages/MainPage';
 import GamePage from './pages/GamePage';
 import ResultPage from './pages/ResultPage';
 import HelpPage from './pages/HelpPage';
-
+import EditProfilePage from './pages/EditProfilePage';
 
 import './App.css';
 
@@ -36,6 +36,7 @@ function App() {
             <Route path="/kboBoard" element={<KboBoard />} />
             <Route path="/kboBoard/:id" element={<KboBoardDetail />} />
             <Route path="/PostFormWithComments/new" element={<PostFormWithComments />} />
+            <Route path="/PostFormWithComments/edit/:id" element={<PostFormWithComments />} />
             <Route path="/PostForm2/edit/:id" element={<PostForm2 />} />
             <Route path="/game/setup" element={<TeamSetupPage />} />
             <Route path="/game/game" element={<MainPage />} />
@@ -44,6 +45,7 @@ function App() {
             <Route path="/game/result" element={<ResultPage />} />
             <Route path="/team/info" element={<TeamInfoPage />} />
             <Route path="/help" element={<HelpPage />} />
+            <Route path="/edit-profile" element={<EditProfilePage />} />
           </Routes>
         </div>
       </Router>

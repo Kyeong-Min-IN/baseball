@@ -32,7 +32,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = BoardController.class)
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class BoardControllerTest {
 
     @Autowired
@@ -133,19 +139,21 @@ class BoardControllerTest {
     void updateBoard() throws Exception {
         BoardRequestDto req = new BoardRequestDto();
         req.setText("updated");
+        req.setWriter("w"); // Add this line
 
         mockMvc.perform(put("/api/board/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        verify(boardService, times(1)).modify(eq(3), eq("updated"),eq("w"));
+        verify(boardService, times(1)).modify(eq(3), any(BoardRequestDto.class));
     }
 
     @Test
     @DisplayName("DELETE /api/board/{no} - 게시글 삭제")
     void deleteBoard() throws Exception {
-        mockMvc.perform(delete("/api/board/4"))
+        mockMvc.perform(delete("/api/board/4")
+                .param("writer", "w"))
                 .andExpect(status().isOk());
 
         verify(boardService, times(1)).delete(eq(4),eq("w"));

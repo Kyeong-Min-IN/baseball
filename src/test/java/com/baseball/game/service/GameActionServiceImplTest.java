@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -43,7 +45,8 @@ class GameActionServiceImplTest {
     void pitcherThrow_success() {
         GameDto game = new GameDto();
         game.setGameOver(false);
-        game.setTop(true); // 유저 수비 턴(컴퓨터 공격) -> 자동 컴퓨터 타격 허용
+        game.setUserOffense(false); // 유저가 수비(투수)하는 상황으로 설정
+        game.setTop(true);
         Batter batter = new Batter();
         batter.setName("타자");
         Pitcher pitcher = new Pitcher();
@@ -74,8 +77,8 @@ class GameActionServiceImplTest {
         Pitcher pitcher = new Pitcher();
         pitcher.setName("김광현");
         pitcher.setWhip(0.9); // 제구 양호 → intended strike일 때 스트라이크 확률 높음
-        pitcher.setStrikeouts(150);
-        pitcher.setPitchersBattersFaced(600);
+        pitcher.setStrikeOut(150);
+        pitcher.setTotalBattersFaced(600);
 
         game.setCurrentBatter(batter);
         game.setCurrentPitcher(pitcher);
@@ -87,46 +90,77 @@ class GameActionServiceImplTest {
         assertThat(result).contains(" | 컴퓨터 타격: ");
     }
 
-    @Test
-    @DisplayName("pitcherThrow: 의도=ball, 제구 완벽(WHIP<=0.9) → 결과=볼")
+        @Test
+    @DisplayName("pitcherThrow: 의도=ball, 제구 완벽(control=100) → 결과=볼")
     void pitcherThrow_intendedBall_perfectControl_returnsBall() {
         GameDto game = new GameDto();
         game.setGameOver(false);
-        game.setTop(true); // 유저 수비 턴(컴퓨터 공격)
+        game.setUserOffense(false); // 유저가 수비(투수)하는 상황으로 설정
+        game.setTop(true);
         Batter batter = new Batter();
         batter.setName("타자");
         batter.setPlateAppearances(1);
         Pitcher pitcher = new Pitcher();
         pitcher.setName("투수");
-        pitcher.setWhip(0.9);
+        pitcher.setControl(100); // 제구력 100으로 설정
         game.setCurrentBatter(batter);
         game.setCurrentPitcher(pitcher);
         given(lifecycleService.getGame("gid")).willReturn(game);
 
         String result = service.pitcherThrow("gid", "ball");
         assertThat(result).startsWith("볼");
-        then(stateService).should(org.mockito.Mockito.atLeastOnce()).checkCount("gid");
+        then(stateService).should(atLeastOnce()).checkCount("gid");
     }
 
     @Test
-    @DisplayName("pitcherThrow: 의도=strike, 제구 완벽(WHIP<=0.9) → 결과=스트라이크")
+    @DisplayName("pitcherThrow: 의도=strike, 제구 완벽(control=100) → 결과=스트라이크")
     void pitcherThrow_intendedStrike_perfectControl_returnsStrike() {
         GameDto game = new GameDto();
         game.setGameOver(false);
-        game.setTop(true); // 유저 수비 턴(컴퓨터 공격)
+        game.setUserOffense(false); // 유저가 수비(투수)하는 상황으로 설정
+        game.setTop(true);
         Batter batter = new Batter();
         batter.setName("타자");
         batter.setPlateAppearances(1);
         Pitcher pitcher = new Pitcher();
         pitcher.setName("투수");
-        pitcher.setWhip(0.9);
+        pitcher.setControl(100); // 제구력 100으로 설정
         game.setCurrentBatter(batter);
         game.setCurrentPitcher(pitcher);
         given(lifecycleService.getGame("gid2")).willReturn(game);
 
         String result = service.pitcherThrow("gid2", "strike");
         assertThat(result).startsWith("스트라이크");
-        then(stateService).should(org.mockito.Mockito.atLeastOnce()).checkCount("gid2");
+        then(stateService).should(atLeastOnce()).checkCount("gid2");
+    }
+
+    @Test
+    @DisplayName("pitcherThrow: 의도=strike, 제구 완벽(WHIP<=0.9) → 결과=스트라이크")
+    void pitcherThrow_intendedStrike_goodWhip_returnsStrike() {
+        try (MockedStatic<Math> mathMockedStatic = Mockito.mockStatic(Math.class)) {
+            mathMockedStatic.when(Math::random).thenReturn(0.1); // Ensure a value that results in a strike
+            given(service.playComputerTurn(anyString(), anyString())).willReturn("스윙 안함");
+
+            GameDto game = new GameDto();
+            game.setGameOver(false);
+            game.setUserOffense(false); // 유저가 수비(투수)하는 상황으로 설정
+            game.setTop(true);
+            Batter batter = new Batter();
+            batter.setName("타자");
+            batter.setPlateAppearances(1);
+            Pitcher pitcher = new Pitcher();
+            pitcher.setName("투수");
+            pitcher.setWhip(0.9);
+            // Set control to a high value to ensure strike, as determinePitchResult uses control
+            pitcher.setControl(100); // Added to ensure high probability of strike
+            game.setCurrentBatter(batter);
+            game.setCurrentPitcher(pitcher);
+            given(lifecycleService.getGame("gid3")).willReturn(game);
+
+            String result = service.pitcherThrow("gid3", "strike");
+            assertThat(result).startsWith("스트라이크");
+            then(stateService).should(atLeastOnce()).checkCount("gid3");
+        }
     }
 
     @Test
@@ -134,6 +168,8 @@ class GameActionServiceImplTest {
     void pitcherThrow_invalidPitchType_throws() {
         GameDto game = new GameDto();
         game.setGameOver(false);
+        game.setTop(true);
+        game.setUserOffense(false);
         Batter batter = new Batter();
         Pitcher pitcher = new Pitcher();
         game.setCurrentBatter(batter);
@@ -167,3 +203,5 @@ class GameActionServiceImplTest {
                 .isInstanceOf(InvalidGameStateException.class);
     }
 }
+
+    

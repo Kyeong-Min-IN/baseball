@@ -161,6 +161,7 @@ public class GameStateServiceImpl implements GameStateService {
         }
 
         // 회원 승/패/무/게임 수 업데이트 (userId를 GameDto에 세팅한 뒤 사용)
+        /*
         try {
             if (memberMapper != null && game.getUserId() != null && !game.getUserId().trim().isEmpty()) {
                 String userId = game.getUserId();
@@ -182,6 +183,7 @@ public class GameStateServiceImpl implements GameStateService {
         } catch (Exception e) {
             log.error("Failed to update member game result", e);
         }
+        */
 
         return game;
     }

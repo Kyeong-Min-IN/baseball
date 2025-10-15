@@ -73,7 +73,7 @@ public class BoardController {
 	// 게시글 수정
 	@PutMapping("/{no}")
 	public ResponseEntity<Void> updateBoard(@PathVariable("no") int no, @RequestBody BoardRequestDto requestDto) {
-		boardService.modify(no, requestDto.getText(), requestDto.getWriter());
+		boardService.modify(no, requestDto);
 		return ResponseEntity.ok().build();
 	}
 

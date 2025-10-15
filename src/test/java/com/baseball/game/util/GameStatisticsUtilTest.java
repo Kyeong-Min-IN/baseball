@@ -2,6 +2,7 @@ package com.baseball.game.util;
 
 import com.baseball.game.dto.Batter;
 import com.baseball.game.dto.Pitcher;
+import com.baseball.game.util.GameStatisticsUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ class GameStatisticsUtilTest {
     void calculateERA() {
         Pitcher p = new Pitcher();
         p.setInningsPitched(9);
-        p.setEarnedRuns(5);
+        p.setEarnedRun(5);
 
         double era = GameStatisticsUtil.calculateERA(p);
         assertThat(era).isEqualTo(5.0);

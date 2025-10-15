@@ -3,131 +3,156 @@
   margin: 0%;
   margin-bottom: 0%;
   padding: 0%;
-display: flex;
-flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
-flex: 1;
+  flex: 1;
 }
 
 .footer {
-background: #2c3e50;
-color: white;
-text-align: center;
-padding: 2rem 0;
-margin-top: auto;
+  background: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: auto;
 }
 
 .footer-content {
-max-width: 1200px;
-margin: 0 auto;
-padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .footer-links {
-display: flex;
-justify-content: center;
-gap: 2rem;
-margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
 }
 
 .footer-link {
-color: #ecf0f1;
-text-decoration: none;
-transition: color 0.3s ease;
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .footer-link:hover {
-color: #3498db;
+  color: #3498db;
 }
 
 .copyright {
-color: #bdc3c7;
-font-size: 0.9rem;
+  color: #bdc3c7;
+  font-size: 0.9rem;
 }
 
 /* Baseball Game Page Styles */
 .game-container {
-padding: 2rem;
-max-width: 100%;
-margin: 0 auto;
-min-height: 80vh;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-background-color : #ddfff9;
-padding: 3rem 1rem 4rem 1rem;
+  padding: 2rem;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f4f4;
+  padding: 3rem 1rem 4rem 1rem;
 }
 
 .game-title {
-text-align: center;
-color: #2c3e50;
-margin-bottom: 2rem;
-font-size: 2.5rem;
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
 }
 
 .game-frame {
-width: 100%;
-height: 600px;
-border: none;
-border-radius: 10px;
-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 600px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .game-info {
-background-image: url('./mp.png');
-width: 700px;
-height: 700px;
-bottom: 100px;
-left: 50%; 
-text-align: center;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-min-height: 300px;
-
+  background-image: url('./mp.png');
+  width: 700px;
+  height: 700px;
+  bottom: 100px;
+  left: 50%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
 }
 
 .game-info h3 {
-margin-bottom: 1rem;
-color: #2c3e50;
+  margin-bottom: 1rem;
+  color: #2c3e50;
 }
 
 .game-info a {
-color: #3498db;
-text-decoration: none;
+  color: #3498db;
+  text-decoration: none;
 }
 
 .game-info a:hover {
-text-decoration: underline;
+  text-decoration: underline;
 }
 
 .game-button {
-border: none;
-padding: 1rem 2rem;
-font-size: 1rem;
-border-radius: 10px;
-cursor: pointer;
-transition: all 0.3s ease;
-font-weight: bold;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
 }
 
 /* Page Background Colors */
 .about-container {
-background-color: #58ffe0; 
+  background-color: #f8f9fa;
 }
 
 .contact-container {
-background-color: #BDFFF3;
+  background-color: #BDFFF3;
 }
 
-.noticeboard-container {
-background-color: #ddfff9;
+
+/* 표 관련 스타일 - 텍스트 커서 제거 */
+table {
+  user-select: none;
+  cursor: default;
 }
 
-.writing-container {
-background-color: #BDFFF3;
+table td, table th {
+  user-select: none;
+  cursor: default;
+}
+
+/* 추가적인 표 스타일링 */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+table tr:hover {
+  background-color: rgba(0, 0, 0, 0.02);
 }

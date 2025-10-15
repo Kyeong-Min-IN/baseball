@@ -49,7 +49,7 @@ const Scoreboard = ({ gameState, homeTeam, awayTeam, lineups, inningCount }) => 
   const currentBatter = gameState?.currentBatter;
 
   const getPlayer = (current, teamName) =>
-    current?.team === teamName.split(" ")[0] ? current.name : "-";
+    current?.team === teamName ? current.name : "-";
 
   const homePitcher = getPlayer(currentPitcher, homeTeamName) || lineups?.home?.pitcher || "-";
   const awayPitcher = getPlayer(currentPitcher, awayTeamName) || lineups?.away?.pitcher || "-";

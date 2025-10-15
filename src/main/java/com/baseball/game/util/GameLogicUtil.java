@@ -54,17 +54,17 @@ public class GameLogicUtil {
         // batter: getStrikeouts(), getPlateAppearances(), getWalks(), getHitByPitch()
 
         // 투수/타자 데이터가 0인 경우를 대비한 안전장치
-        double pitcherTotalBatters = pitcher.getPitchersBattersFaced() > 0 ? pitcher.getPitchersBattersFaced() : 1;
+        double pitcherTotalBatters = pitcher.getTotalBattersFaced() > 0 ? pitcher.getTotalBattersFaced() : 1;
         double batterTotalPAs = batter.getPlateAppearances() > 0 ? batter.getPlateAppearances() : 1;
 
         // 1. 스트라이크 확률 계산
         double pitcherStrikeoutRate = pitcher.getStrikeouts() / pitcherTotalBatters;
-        double batterStrikeoutRate = batter.getStrike_Out() / batterTotalPAs;
+        double batterStrikeoutRate = batter.getStrikeOut() / batterTotalPAs;
         double finalStrikeProb = (pitcherStrikeoutRate + batterStrikeoutRate) / 2.0;
 
         // 2. 볼 확률 계산
         double pitcherWalkRate = (pitcher.getWalks() + pitcher.getHitByPitch()) / pitcherTotalBatters;
-        double batterWalkRate = (batter.getFour_Ball() + batter.getHit_By_Pitch()) / batterTotalPAs;
+        double batterWalkRate = (batter.getFourBall() + batter.getHitByPitch()) / batterTotalPAs;
         double finalBallProb = (pitcherWalkRate + batterWalkRate) / 2.0;
 
         // 3. 최종 확률에 기반한 결과 결정
@@ -202,8 +202,8 @@ public class GameLogicUtil {
         }
         // 1) 컨택 확률: 배터 K%와 피처 K% 기반 + 존/타이밍 보정
         double batterPA = batter.getPlateAppearances() > 0 ? batter.getPlateAppearances() : 1;
-        double batterKRate = Math.max(0.0, Math.min(1.0, (double) batter.getStrike_Out() / batterPA));
-        double pitcherBF = pitcher.getPitchersBattersFaced() > 0 ? pitcher.getPitchersBattersFaced() : 1;
+        double batterKRate = Math.max(0.0, Math.min(1.0, (double) batter.getStrikeOut() / batterPA));
+        double pitcherBF = pitcher.getTotalBattersFaced() > 0 ? pitcher.getTotalBattersFaced() : 1;
         double pitcherKRate = Math.max(0.0, Math.min(1.0, (double) pitcher.getStrikeouts() / pitcherBF));
 
         double contactProb = 1.0 - ((batterKRate * 0.5) + (pitcherKRate * 0.5));
@@ -223,8 +223,8 @@ public class GameLogicUtil {
         // 2) 인플레이 시 안타 확률: 배터 BA와 투수 피안타율 기반 + 존/타이밍 보정
         double batterBA = batter.getBattingAverage() > 0 ? batter.getBattingAverage()
                 : batter.calculateBattingAverage();
-        double pitcherHitRate = pitcher.getPitchersBattersFaced() > 0
-                ? ((double) pitcher.getHits() / pitcher.getPitchersBattersFaced())
+        double pitcherHitRate = pitcher.getTotalBattersFaced() > 0
+                ? ((double) pitcher.getHits() / pitcher.getTotalBattersFaced())
                 : 0.25;
         double pHit = batterBA * 0.6 + pitcherHitRate * 0.4; // 기본 가중 평균
         pHit += "strike".equals(pitchType) ? 0.03 : -0.05; // 존 보정
@@ -291,46 +291,6 @@ public class GameLogicUtil {
             return "2루타";
         return "안타";
     }
-
-    /**
-     * 최종 타격 점수에 따른 실제 타격 결과 결정 (헬퍼 메서드)
-     * 
-     * @param finalScore 계산된 타격 점수
-     * @return 타격 결과 문자열
-     * 
-     *         private static String getActualHitResultBasedOnFinalScore(double
-     *         finalScore) {
-     *         // 목적: 리그 평균이 높을수록 안타/장타가 좀 더 잘 나오도록 임계값을 동적으로 보정
-     *         double avg = GameConstants.LEAGUE_AVG_BA; // 기준 0.260
-     *         double sensitivity = GameConstants.LEAGUE_THRESHOLD_SENSITIVITY; //
-     *         100.0 → 0.01 변동당 1점 조정
-     *         // 평균이 기준(0.260)보다 높으면 임계값을 낮추고, 낮으면 높임
-     *         double delta = avg - 0.260;
-     *         double adjust = sensitivity * delta; // 점수 조정치(+이면 기준 낮춤)
-     * 
-     *         // 타자 우호적으로 임계값을 완만히 낮춤
-     *         double hr = 92 - adjust;
-     *         double t3 = 87 - adjust;
-     *         double t2 = 77 - adjust;
-     *         double hit = 56 - adjust;
-     *         double gbOut = 36 - adjust;
-     *         double fbOut = 16 - adjust;
-     * 
-     *         if (finalScore > hr)
-     *         return "홈런";
-     *         if (finalScore > t3)
-     *         return "3루타";
-     *         if (finalScore > t2)
-     *         return "2루타";
-     *         if (finalScore > hit)
-     *         return "안타";
-     *         if (finalScore > gbOut)
-     *         return "땅볼 아웃";
-     *         if (finalScore > fbOut)
-     *         return "뜬공 아웃";
-     *         return "삼진 아웃";
-     *         }
-     */
 
     /**
      * 땅볼 처리: 병살/진루/아웃

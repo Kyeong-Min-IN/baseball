@@ -3,9 +3,9 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.baseball.game.mapper.TeamLineupMapper">
-    <resultMap id="hitterStatsResultMap" type="com.baseball.game.ranking.dto.KboHitterStatsDto">
+    <resultMap id="hitterStatsResultMap" type="com.baseball.game.dto.Batter">
         <id property="no" column="No"/>
-        <result property="playerName" column="Player_Name"/>
+        <result property="name" column="Player_Name"/>
         <result property="playerTeam" column="Player_Team"/>
         <result property="battingAverage" column="Batting_average"/>
         <result property="gameNum" column="Game_Num"/>
@@ -22,9 +22,9 @@
         <result property="onbasePlusSlug" column="Onbase_Plus_Slug"/>
     </resultMap>
 	
-	    <resultMap id="pitcherStatsResultMap" type="com.baseball.game.ranking.dto.KboPitcherStatsDto">
+	    <resultMap id="pitcherStatsResultMap" type="com.baseball.game.dto.Pitcher">
 	        <id property="no" column="No"/>
-	        <result property="playerName" column="Player_Name"/>
+	        <result property="name" column="Player_Name"/>
 	        <result property="playerTeam" column="Player_Team"/>
 	        <result property="earnedRunAverage" column="Earned_Run_Average"/>
 	        <result property="gameNum" column="Game_Num"/>

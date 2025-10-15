@@ -1,3 +1,26 @@
+/* 텍스트 선택 방지 */
+.home-container {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.home-container * {
+    user-select: none;
+    cursor: default;
+}
+
+/* 예외 처리 */
+input, textarea {
+    user-select: text !important;
+    cursor: text !important;
+}
+
+button, .kbo-button, .login-button, a {
+    cursor: pointer !important;
+}
+
 .home-container {
     padding: 20px;
     font-family: Arial, sans-serif;
@@ -49,13 +72,9 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    max-width: 1200px; 
-    margin: 0 auto; 
-    gap: 20px; 
-}
-.logout-button{
-    border: 1px solid #ccc;
-    color: black;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
 }
 
 .main-left-section {
@@ -88,7 +107,7 @@
 }
 
 .login-header {
-    height : 20px;
+    height: 20px;
 }
 
 .ranking-title, .login-title {
@@ -135,43 +154,96 @@
     color: #4a69bd;
 }
 
+/* 수정된 로그인 컨테이너 스타일 */
 .login-container {
     text-align: center;
-    background-color: #f0f4f9;
+    background-color: white;
+    border: 1px solid #e1e8ed;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .login-container h3 {
     color: #4a69bd;
+    margin-bottom: 20px;
+}
+
+.login-container p {
+    color: #333;
+    font-weight: 500;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px;
+    gap: 12px;
+    padding: 15px;
 }
 
 .login-form input {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 12px 16px;
+    border: 2px solid #f0f2f5;
+    border-radius: 8px;
     font-size: 1rem;
+    background: #fafbfc;
+    transition: all 0.2s ease;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #4a69bd;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+}
+
+.login-form input::placeholder {
+    color: #9ca3af;
 }
 
 .login-button {
     padding: 12px;
+    margin: 5px;
     background-color: #4a69bd;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
 }
 
 .login-button:hover {
-    background-color: #3b5090;
+    background-color: #3d5a9e;
+}
+
+.login-button:active {
+    background-color: #334c87;
+}
+
+.logout-button {
+    padding: 12px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+    background-color: #5a6268;
+}
+
+.login-message {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 0.9rem;
 }
 
 .team-ranking-container {
@@ -209,4 +281,48 @@
 .team-wins {
     font-weight: bold;
     color: #4a69bd;
+}
+
+/* KBO 뉴스 포털 버튼 스타일 */
+.news-portal-container {
+    margin-top: 20px;
+}
+
+.news-portal-container button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4a69bd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.news-portal-container button:hover {
+    background-color: #3d5a9e;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .content-area {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .banner-title {
+        font-size: 2rem;
+    }
+
+    .banner-buttons .kbo-button {
+        display: block;
+        margin: 5px 0;
+        width: 100%;
+    }
+
+    .home-container {
+        padding: 10px;
+    }
 }

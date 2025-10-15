@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import '../styles/HomePage.css';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -7,6 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from 'react-router-dom';
 import { parseHitterHtmlToArray, parsePitcherHtmlToArray, normalizeList } from '../utils/htmlTableParser';
 import { AuthContext } from '../context/AuthContext';
+import { authAPI } from '../api/api'; // Import authAPI
 
 const HomePage = () => {
     const [hitterStats, setHitterStats] = useState([]);
@@ -15,41 +16,54 @@ const HomePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const getTeamGameNum = (teamName) => {
+      const team = teamStats.find(t => t.teamName === teamName);
+      return team ? team.gameNum : 0;
+    };
+
     const { user, login, logout } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loginMessage, setLoginMessage] = useState('');
+    // const [loginMessage, setLoginMessage] = useState('');
 
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setLoginMessage('');
+        // setLoginMessage(''); // This line will be removed
+
         try {
-            const res = await axios.post('http://localhost:8080/api/login/login', {
-                id: username,
-                pw: password
+            const params = new URLSearchParams();
+            params.append('username', username);
+            params.append('password', password);
+
+            const res = await api.post('/login', params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             });
 
             if (res.data.success) {
-                // userInfo가 없으면 최소 Id를 넣어줌
                 const userInfo = res.data.userInfo || { Id: username };
                 login(userInfo);
-                setLoginMessage('');
+                alert('로그인 성공!'); // Use alert for success
                 setUsername('');
                 setPassword('');
             } else {
-                setLoginMessage(res.data.message || '로그인 실패');
+                alert(res.data.message || '로그인 실패'); // Use alert for failure
             }
         } catch (err) {
             console.error(err);
-            setLoginMessage('로그인 처리 중 오류 발생');
+            if (err.response && err.response.data && err.response.data.message) {
+                alert(err.response.data.message); // Use alert for specific error
+            } else {
+                alert('로그인 처리 중 오류 발생'); // Use alert for general error
+            }
         }
     };
 
     const handleLogout = () => {
         logout();  // Context user 상태를 null로
-        setLoginMessage('');
     };
 
     const parseTeamHtmlToArray = (htmlString) => {
@@ -81,20 +95,18 @@ const HomePage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [hitterRes, pitcherRes, teamRes] = await Promise.all([
-                    axios.get('/kbo/hitter-stats', { params: { sortBy: 'run' } }),
-                    axios.get('/kbo/pitcher-stats', { params: { sortBy: 'era' } }),
-                    axios.get('/kbo/team-stats')
+                const teamRes = await api.get('/kbo/team-stats');
+                setTeamStats(teamRes.data);
+
+                const [hitterRes, pitcherRes] = await Promise.all([
+                    api.get('/kbo/hitter-stats'),
+                    api.get('/kbo/pitcher-stats')
                 ]);
 
-                setHitterStats(Array.isArray(hitterRes.data) ? hitterRes.data : (typeof hitterRes.data === 'string' ? parseHitterHtmlToArray(hitterRes.data) : normalizeList(hitterRes.data)));
-                setPitcherStats(Array.isArray(pitcherRes.data) ? pitcherRes.data : (typeof pitcherRes.data === 'string' ? parsePitcherHtmlToArray(pitcherRes.data) : normalizeList(pitcherRes.data)));
+                setHitterStats(hitterRes.data);
+                setPitcherStats(pitcherRes.data);
 
-                const rawTeam = teamRes.data;
-                const normalizedTeam = Array.isArray(rawTeam)
-                    ? rawTeam
-                    : (typeof rawTeam === 'string' ? parseTeamHtmlToArray(rawTeam) : normalizeList(rawTeam));
-                setTeamStats(normalizedTeam);
+                setTeamStats(teamRes.data);
 
             } catch (err) {
                 setError("데이터를 불러오는 데 실패했습니다.");
@@ -148,7 +160,7 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>타자 랭킹 (타율)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...hitterStats].sort((a,b)=>b.battingAverage-a.battingAverage).slice(0,5).map((p,i)=>(
+                                        {[...hitterStats].filter(p => p.plateAppearance >= getTeamGameNum(p.playerTeam) * 3.1).sort((a,b)=>b.battingAverage-a.battingAverage).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -160,7 +172,7 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>타자 랭킹 (타점)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...hitterStats].sort((a,b)=>b.runsBattedIn-a.runsBattedIn).slice(0,5).map((p,i)=>(
+                                        {[...hitterStats].filter(p => p.plateAppearance >= getTeamGameNum(p.playerTeam) * 3.1).sort((a,b)=>b.runsBattedIn-a.runsBattedIn).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -172,7 +184,7 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>타자 랭킹 (홈런)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...hitterStats].sort((a,b)=>b.homeRun-a.homeRun).slice(0,5).map((p,i)=>(
+                                        {[...hitterStats].filter(p => p.plateAppearance >= getTeamGameNum(p.playerTeam) * 3.1).sort((a,b)=>b.homeRun-a.homeRun).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -190,7 +202,7 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>투수 랭킹 (평균자책점)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...pitcherStats].sort((a,b)=>a.earnedRunAverage-b.earnedRunAverage).slice(0,5).map((p,i)=>(
+                                        {[...pitcherStats].filter(p => p.inningsPitched >= getTeamGameNum(p.playerTeam) * 1).sort((a,b)=>a.earnedRunAverage-b.earnedRunAverage).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -202,7 +214,11 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>투수 랭킹 (승리)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...pitcherStats].sort((a,b)=>b.win-a.win).slice(0,5).map((p,i)=>(
+                                        {[...pitcherStats].filter(p => p.inningsPitched >= getTeamGameNum(p.playerTeam) * 1).sort((a,b)=>{
+                                            if (b.win !== a.win) return b.win - a.win;
+                                            if (a.earnedRunAverage !== b.earnedRunAverage) return a.earnedRunAverage - b.earnedRunAverage;
+                                            return a.playerName.localeCompare(b.playerName);
+                                        }).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -214,7 +230,7 @@ const HomePage = () => {
                                 <div className="ranking-box">
                                     <h3>투수 랭킹 (탈삼진)</h3>
                                     <ol className="player-ranking-list">
-                                        {[...pitcherStats].sort((a,b)=>b.strikeOut-a.strikeOut).slice(0,5).map((p,i)=>(
+                                        {[...pitcherStats].filter(p => p.inningsPitched >= getTeamGameNum(p.playerTeam) * 1).sort((a,b)=>b.strikeOut-a.strikeOut).slice(0,5).map((p,i)=>(
                                             <li key={i}>
                                                 <span className="rank-number">{i+1}.</span>
                                                 <span className="player-name">{p.playerName} ({p.playerTeam})</span>
@@ -235,8 +251,9 @@ const HomePage = () => {
                         <h3></h3>
                         {user ? (
                             <div>
-                                <p>{user.Id}님 환영합니다!!</p>
+                                <p>{user.nickname || user.Id}님 환영합니다!!</p>
                                 <button className="login-button" onClick={handleLogout}>로그아웃</button>
+                                <button className="login-button" onClick={() => navigate('/edit-profile')}>회원정보 수정</button>
                             </div>
                         ) : (
                             <form onSubmit={handleLogin} className="login-form">
@@ -246,7 +263,6 @@ const HomePage = () => {
                                 <button type="button" className="login-button" onClick={()=>navigate('/ProfilePage')}>회원가입</button>
                             </form>
                         )}
-                        {loginMessage && <div className="login-message">{loginMessage}</div>}
                     </div>
 
                     {/* Team Ranking */}

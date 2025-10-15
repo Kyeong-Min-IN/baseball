@@ -1,47 +1,56 @@
 package com.baseball.ranking.dto;
 
+import com.baseball.game.dto.Player;
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KboPitcherStatsDto {
-    private Long no;
-    private String playerName; // 선수 이름
-    private String playerTeam; // 팀이름
-    private Double earnedRunAverage; // 평균 자책점
-    private Integer gameNum; // 경기수
-    private Integer win; // 승
-    private Integer lose; // 패
-    private Integer save; // 세이브
-    private Integer hold; // 홀드
-    private Double inningsPitched; // 이닝
-    private Integer hits; // 피안타
-    private Integer homeRun; // 피홈런
-    private Integer baseOnBalls; // 볼넷
-    private Integer strikeOut; // 탈삼진
-    private Integer runs; // 실점
-    private Integer earnedRun; // 자책
-    private Double whip; // WHIP
+@EqualsAndHashCode(callSuper=false)
+public class KboPitcherStatsDto extends Player {
+    private int no;
+    private double earnedRunAverage; // 평균자책점
+    private int gameNum; // 경기 수
+    private int win; // 승
+    private int lose; // 패
+    private int save; // 세이브
+    private int hold; // 홀드
+    private double winningPercentage; // 승률
+    private double inningsPitched; // 이닝 수
+    private int hits; // 피안타
+    private int homeRun; // 피홈런
+    private int baseOnBalls; // 볼넷
+    private int hitByPitch; // 사구
+    private int strikeOut; // 삼진
+    private int runs; // 실점
+    private int earnedRun; // 자책점
+    private double whip; // WHIP
+    private int completeGame; // 완투
+    private int shutout; // 완봉
+    private int qualityStart; // 퀄리티 스타트
+    private int blownSave; // 블론 세이브
+    private int totalBattersFaced; // 상대 타자 수
+    private int numberOfPitching; // 투구 수
+    private double opponentBattingAverage; // 피안타율
+    private int twoBases; // 2루타 허용
+    private int threeBases; // 3루타 허용
+    private int sacrificeBunt; // 희생번트 허용
+    private int sacrificeFly; // 희생플라이 허용
+    private int ibb; // 고의사구 허용
+    private int wildPitch; // 폭투
+    private int balk; // 보크
+    private int control;
+    private int speed;
+    private int stamina;
+    private int movement;
 
-    /**
-     * Convert decimal innings (e.g., 5.333, 5.667) to baseball style (5.1, 5.2).
-     * One inning equals 3 outs → fractional part is in thirds.
-     */
-    public String getInningsPitchedDisplay() {
-        if (inningsPitched == null) {
-            return "0.0";
-        }
-        double ip = inningsPitched;
-        int wholeInnings = (int) Math.floor(ip);
-        double fractional = ip - wholeInnings;
-        int thirds = (int) Math.round(fractional * 3.0); // 0,1,2,(3)
-        if (thirds >= 3) {
-            wholeInnings += 1;
-            thirds = 0;
-        }
-        return wholeInnings + "." + thirds;
+    public KboPitcherStatsDto(String name, String team) {
+        this.setName(name);
+        this.setTeam(team);
     }
 }

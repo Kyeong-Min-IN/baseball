@@ -10,7 +10,7 @@ public interface MemberMapper {
 
 	public boolean checkId(String Id);
 
-	public void register(String Id, String Pw, String email);
+	public void register(@Param("Id") String Id, @Param("Pw") String Pw, @Param("email") String email, @Param("nickname") String nickname);
 
 	public MemberDto member(String Id);
 
@@ -22,4 +22,12 @@ public interface MemberMapper {
 	void incrementLose(@Param("Id") String id);
 
 	void incrementDraw(@Param("Id") String id);
+
+	void updateMember(MemberDto memberDto);
+
+	void deleteMember(String id);
+
+	boolean checkNickname(String nickname);
+
+	boolean checkNicknameForUpdate(@Param("nickname") String nickname, @Param("id") String id);
 }

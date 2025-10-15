@@ -1,7 +1,7 @@
 
 .board-detail-container,
 .container {
-  background: #8cffea;
+  background: #f6f5f5;
   min-height: 100vh;
   max-width:100%;
   display: flex;
@@ -17,7 +17,7 @@
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   padding: 2.5rem 2rem;
   margin-bottom: 2rem;
-  width: 500px;
+  width: 800px;
   max-width: 90vw;
   display: flex;
   flex-direction: column;

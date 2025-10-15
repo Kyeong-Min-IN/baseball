@@ -294,18 +294,19 @@ public class TeamLineupServiceImpl implements TeamLineupService {
         for (CustomLineupRequest.LineupPosition requestPosition : request.getLineup()) {
             String playerName = requestPosition.getPlayerName();
             Integer lineupOrder = requestPosition.getPosition(); // getPosition()이 Integer를 반환한다고 가정
+            Integer playerNo = requestPosition.getPlayerNo();
 
             Batter batter = null;
             Pitcher pitcher = null;
-            if (batterMapper != null) {
+            if (batterMapper != null && playerNo != null) {
                 try {
-                    batter = batterMapper.findByName(playerName);
+                    batter = batterMapper.findByNo(playerNo);
                 } catch (Exception ignored) {
                 }
             }
-            if (pitcherMapper != null) {
+            if (pitcherMapper != null && playerNo != null) {
                 try {
-                    pitcher = pitcherMapper.findByName(playerName);
+                    pitcher = pitcherMapper.findByNo(playerNo);
                 } catch (Exception ignored) {
                 }
             }

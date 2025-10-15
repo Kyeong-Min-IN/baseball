@@ -24,11 +24,12 @@ public class CommentServiceImpl implements CommentService{
 		mapper.comment(d);
 	}
 	@Override
-	public void delcom(int boardNo,int commentId) {
-		mapper.delcom(boardNo, commentId);
+	public void delete(int boardNo,int commentId) {
+		mapper
+				.delete(boardNo, commentId);
 	}
 	@Override
-	public void modify(int boardNo,int commentId,String text) {
-		mapper.modify(boardNo, commentId, text);
+	public void update(int boardNo,int commentId,String text) {
+		mapper.update(boardNo, commentId, text);
 	}
 }

@@ -2,6 +2,7 @@ package com.baseball.game.util;
 
 import com.baseball.game.dto.Batter;
 import com.baseball.game.dto.Pitcher;
+import com.baseball.game.util.GameLogicUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -29,16 +30,16 @@ class GameLogicWithStatsTest {
     @DisplayName("determinePitchResultByStats: K% 높고 BB% 낮으면 스트라이크 비중이 높다")
     void pitchResult_withKandBBRates() {
         Pitcher p = new Pitcher();
-        p.setPitchersBattersFaced(600);
-        p.setStrikeouts(180); // 30% K
+        p.setTotalBattersFaced(600);
+        p.setStrikeOut(180); // 30% K
         p.setWalks(30); // 5% BB
         p.setHitByPitch(3);
 
         Batter b = new Batter();
         b.setPlateAppearances(600);
-        b.setStrike_Out(120); // 20% K
-        b.setFour_Ball(40); // 6.7% BB
-        b.setHit_By_Pitch(5);
+        b.setStrikeOut(120); // 20% K
+        b.setFourBall(40); // 6.7% BB
+        b.setHitByPitch(5);
 
         String result = GameLogicUtil.determinePitchResultByStats(p, b);
         assertThat(result).isIn("스트라이크", "볼");

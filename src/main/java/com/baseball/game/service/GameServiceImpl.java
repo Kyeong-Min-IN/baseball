@@ -4,8 +4,12 @@ import com.baseball.game.dto.GameDto;
 import com.baseball.game.mapper.BatterMapper;
 import com.baseball.game.mapper.PitcherMapper;
 import com.baseball.game.dto.TeamLineupSetRequest;
-import com.baseball.game.service.TeamLineupService;
 import com.baseball.game.util.ValidationUtil;
+import com.baseball.game.service.GameService;
+import com.baseball.game.service.GameLifecycleService;
+import com.baseball.game.service.GameStateService;
+import com.baseball.game.service.GameActionService;
+import com.baseball.game.service.GameValidationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -177,10 +181,10 @@ public class GameServiceImpl implements GameService {
         }
 
         // 사용자 팀만 라인업 변경 가능: isUserOffense=true면 사용자 팀은 원정팀, false면 홈팀
-        boolean isUsersTeam = (game.isUserOffense() && isAway) || (!game.isUserOffense() && isHome);
-        if (!isUsersTeam) {
-            throw new com.baseball.game.exception.ValidationException("사용자 팀이 아닌 팀의 라인업은 변경할 수 없습니다.");
-        }
+        // boolean isUsersTeam = (game.isUserOffense() && isAway) || (!game.isUserOffense() && isHome);
+        // if (!isUsersTeam) {
+        //     throw new com.baseball.game.exception.ValidationException("사용자 팀이 아닌 팀의 라인업은 변경할 수 없습니다.");
+        // }
 
         // 요청 팀을 DB 팀 표기로 정규화
         String dbTeamOfRequest = reqDbTeam;

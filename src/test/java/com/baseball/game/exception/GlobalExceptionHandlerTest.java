@@ -25,12 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(GameController.class)
-@ImportAutoConfiguration(exclude = {
-        org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration.class,
-        org.mybatis.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration.class,
-        org.mybatis.spring.boot.autoconfigure.MybatisProperties.class
-})
+@WebMvcTest(controllers = GameController.class, excludeAutoConfiguration = { org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class, org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration.class })
 class GlobalExceptionHandlerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -59,7 +54,7 @@ class GlobalExceptionHandlerTest {
     void validationException_returns400() throws Exception {
         GameActionRequest req = new GameActionRequest();
         req.setPitchType(null); // pitchType 누락
-        mockMvc.perform(post("/api/baseball/game/test-id/pitch")
+        mockMvc.perform(post("/api/baseball/game/test-id/pitcher")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest())

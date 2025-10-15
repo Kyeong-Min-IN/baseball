@@ -1,5 +1,8 @@
 package com.baseball.game.dto;
 
+import lombok.Data;
+
+@Data
 public abstract class Player {
     private String name;
     private String team;

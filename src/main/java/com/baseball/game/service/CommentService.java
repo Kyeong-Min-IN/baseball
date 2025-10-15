@@ -5,6 +5,6 @@ import com.baseball.game.dto.CommentDto;
 public interface CommentService {
 	public ArrayList<CommentDto> getComment(int boardNo);
 	public void comment(CommentDto d);
-	public void delcom(int boardNo,int commentId);
-	public void modify(int boardNo,int commentId,String text);
+	public void delete(int boardNo,int commentId);
+	public void update(int boardNo,int commentId,String text);
 }

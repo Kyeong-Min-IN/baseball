@@ -5,6 +5,7 @@
 <mapper namespace="com.baseball.game.mapper.BatterMapper">
 	<select id="findByTeam" resultType="com.baseball.game.dto.Batter">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Plate_Appearance AS plateAppearances,
@@ -24,6 +25,7 @@
 
 	<select id="findByNames" resultType="com.baseball.game.dto.Batter">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Plate_Appearance AS plateAppearances,
@@ -46,6 +48,7 @@
 
 	<select id="findByName" resultType="com.baseball.game.dto.Batter">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Plate_Appearance AS plateAppearances,
@@ -60,5 +63,24 @@
 			ROUND(CAST(Hit AS FLOAT) / NULLIF(At_Bat, 0), 3) AS battingAverage
 		FROM kbo_hitter_stats_2024
 		WHERE Player_Name = #{name}
+	</select>
+
+	<select id="findByNo" resultType="com.baseball.game.dto.Batter">
+		SELECT
+			No AS playerNo,
+			Player_Name AS name,
+			Player_Team AS team,
+			Plate_Appearance AS plateAppearances,
+			Strike_out As strike_Out,
+			Four_Ball As four_Ball,
+			Hit_By_Pitch As hit_By_Pitch,
+			At_Bat AS atBats,
+			Hit AS hits,
+			two_Base AS twoBases,
+			three_Base AS threeBases,
+			Home_Run AS homeRuns,
+			ROUND(CAST(Hit AS FLOAT) / NULLIF(At_Bat, 0), 3) AS battingAverage
+		FROM kbo_hitter_stats_2024
+		WHERE No = #{no}
 	</select>
 </mapper>

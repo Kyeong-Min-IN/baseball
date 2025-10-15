@@ -1,15 +1,18 @@
 package com.baseball.game.service;
 
 import com.baseball.game.dto.GameDto;
-import com.baseball.game.mapper.BatterMapper;
-import com.baseball.game.mapper.PitcherMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import static org.mockito.BDDMockito.*;
-import static org.assertj.core.api.Assertions.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+@DisplayName("GameServiceImpl 위임 테스트")
 class GameServiceImplTest {
 
     @InjectMocks
@@ -21,12 +24,6 @@ class GameServiceImplTest {
     private GameStateService stateService;
     @Mock
     private GameActionService actionService;
-    @Mock
-    private GameValidationService validationService;
-    @Mock
-    private BatterMapper batterMapper;
-    @Mock
-    private PitcherMapper pitcherMapper;
 
     @BeforeEach
     void setUp() {
@@ -61,12 +58,25 @@ class GameServiceImplTest {
     }
 
     @Test
-    @DisplayName("batterSwing은 actionService.batterSwing을 위임한다")
-    void batterSwing_delegatesToActionService() {
+    @DisplayName("resetGame은 lifecycleService.resetGame을 위임한다")
+    void resetGame_delegatesToLifecycleService() {
+        // when
+        gameService.resetGame("id");
+
+        // then
+        verify(lifecycleService).resetGame("id");
+    }
+
+    @Test
+    @DisplayName("batterSwing(double)은 actionService.batterSwing을 위임한다")
+    void batterSwingWithTiming_delegatesToActionService() {
+        // given
         given(actionService.batterSwing("id", true, true)).willReturn("result");
 
+        // when
         String result = gameService.batterSwing("id", true, true);
 
+        // then
         assertThat(result).isEqualTo("result");
         verify(actionService).batterSwing("id", true, true);
     }
@@ -74,10 +84,13 @@ class GameServiceImplTest {
     @Test
     @DisplayName("pitcherThrow는 actionService.pitcherThrow를 위임한다")
     void pitcherThrow_delegatesToActionService() {
+        // given
         given(actionService.pitcherThrow("id", "Fastball")).willReturn("strike");
 
+        // when
         String result = gameService.pitcherThrow("id", "Fastball");
 
+        // then
         assertThat(result).isEqualTo("strike");
         verify(actionService).pitcherThrow("id", "Fastball");
     }
@@ -85,22 +98,28 @@ class GameServiceImplTest {
     @Test
     @DisplayName("playComputerTurn은 actionService.playComputerTurn을 위임한다")
     void playComputerTurn_delegatesToActionService() {
-        given(actionService.playComputerTurn("id")).willReturn("AI");
+        // given
+        given(actionService.playComputerTurn("id")).willReturn("AI_Swing");
 
+        // when
         String result = gameService.playComputerTurn("id");
 
-        assertThat(result).isEqualTo("AI");
+        // then
+        assertThat(result).isEqualTo("AI_Swing");
         verify(actionService).playComputerTurn("id");
     }
 
     @Test
     @DisplayName("nextInning은 stateService.nextInning을 위임한다")
     void nextInning_delegatesToStateService() {
+        // given
         GameDto dto = new GameDto();
         given(stateService.nextInning("id")).willReturn(dto);
 
+        // when
         GameDto result = gameService.nextInning("id");
 
+        // then
         assertThat(result).isSameAs(dto);
         verify(stateService).nextInning("id");
     }
@@ -108,11 +127,14 @@ class GameServiceImplTest {
     @Test
     @DisplayName("endGame은 stateService.endGame을 위임한다")
     void endGame_delegatesToStateService() {
+        // given
         GameDto dto = new GameDto();
         given(stateService.endGame("id")).willReturn(dto);
 
+        // when
         GameDto result = gameService.endGame("id");
 
+        // then
         assertThat(result).isSameAs(dto);
         verify(stateService).endGame("id");
     }
@@ -120,16 +142,10 @@ class GameServiceImplTest {
     @Test
     @DisplayName("advanceRunners는 stateService.advanceRunners를 위임한다")
     void advanceRunners_delegatesToStateService() {
+        // when
         gameService.advanceRunners("id", 2);
 
+        // then
         verify(stateService).advanceRunners("id", 2);
-    }
-
-    @Test
-    @DisplayName("resetGame은 lifecycleService.resetGame을 위임한다")
-    void resetGame_delegatesToLifecycleService() {
-        gameService.resetGame("id");
-
-        verify(lifecycleService).resetGame("id");
     }
 }

@@ -5,6 +5,7 @@
 <mapper namespace="com.baseball.game.mapper.PitcherMapper">
 	<select id="findByTeam" resultType="com.baseball.game.dto.Pitcher">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Innings_Pitched AS inningsPitched,
@@ -30,6 +31,7 @@
 
 	<select id="findByNames" resultType="com.baseball.game.dto.Pitcher">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Innings_Pitched AS inningsPitched,
@@ -51,6 +53,7 @@
 
 	<select id="findByName" resultType="com.baseball.game.dto.Pitcher">
 		SELECT
+			No AS playerNo,
 			Player_Name AS name,
 			Player_Team AS team,
 			Innings_Pitched AS inningsPitched,
@@ -64,5 +67,23 @@
 			Hit_By_Pitch AS hitByPitch
 		FROM kbo_pitcher_stats_2024
 		WHERE Player_Name = #{name}
+	</select>
+
+	<select id="findByNo" resultType="com.baseball.game.dto.Pitcher">
+		SELECT
+			No AS playerNo,
+			Player_Name AS name,
+			Player_Team AS team,
+			Innings_Pitched AS inningsPitched,
+			Strike_Out AS strikeouts,
+			Base_On_Balls AS walks,
+			Hits AS hits,
+			Earned_Run AS earnedRuns,
+			Earned_Run_Average AS era,
+			WHIP AS whip,
+			Total_Batters_Faced AS pitchersBattersFaced,
+			Hit_By_Pitch AS hitByPitch
+		FROM kbo_pitcher_stats_2024
+		WHERE No = #{no}
 	</select>
 </mapper>

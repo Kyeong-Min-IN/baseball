@@ -10,14 +10,13 @@
 		order by commentId asc
 	</select>
 	<insert id="comment">
-		insert into `comment`(commentId, boardNo, writer, `text`, created_at)
-		select IFNULL(MAX(commentId), 0) + 1, #{boardNo}, #{writer}, #{text}, NOW()
-		from `comment` where boardNo = #{boardNo}
+		insert into `comment`(board_no, writer, `text`, created_at)
+		values(#{boardNo}, #{writer}, #{text}, NOW())
 	</insert>
-	<delete id="delcom">
+	<delete id="delete">
 		delete from `comment` where boardNo=#{boardNo} and commentId=#{commentId}
 	</delete>
-	<update id="modify">
+	<update id="update">
 		update `comment` set `text`=#{text} where boardNo=#{boardNo} and commentId=#{commentId}
 	</update>
 </mapper>

@@ -129,12 +129,7 @@ const KboPage = () => {
 
     switch (hitter) {
       case '타자':
-        const hittersToRender = hitterSortBy === 'battingAverage'
-          ? hitterStats.filter(hitter => {
-            const gameNum = getTeamGameNum(hitter.playerTeam);
-            return hitter.plateAppearance >= gameNum * 3.1;
-          })
-          : hitterStats;
+        const hittersToRender = hitterStats;
 
         return (
           <table className="record-table">
@@ -162,8 +157,8 @@ const KboPage = () => {
               {Array.isArray(hittersToRender) && hittersToRender.map((hitter, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{hitter.playerName}</td>
-                  <td>{hitter.playerTeam}</td>
+                  <td>{hitter.name}</td>
+                  <td>{hitter.team}</td>
                   <td>{hitter.battingAverage}</td>
                   <td>{hitter.gameNum}</td>
                   <td>{hitter.plateAppearance}</td>
@@ -186,7 +181,7 @@ const KboPage = () => {
       case '투수':
         const pitchersToRender = pitcherSortBy === 'era'
           ? pitcherStats.filter(pitcher => {
-            const gameNum = getTeamGameNum(pitcher.playerTeam);
+            const gameNum = getTeamGameNum(pitcher.team);
             return pitcher.inningsPitched >= gameNum * 1;
           })
           : pitcherStats;
@@ -218,8 +213,8 @@ const KboPage = () => {
               {Array.isArray(pitchersToRender) && pitchersToRender.map((pitcher, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{pitcher.playerName}</td>
-                  <td>{pitcher.playerTeam}</td>
+                  <td>{pitcher.name}</td>
+                  <td>{pitcher.team}</td>
                   <td>{pitcher.earnedRunAverage}</td>
                   <td>{pitcher.gameNum}</td>
                   <td>{pitcher.win}</td>

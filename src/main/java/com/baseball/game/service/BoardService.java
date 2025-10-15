@@ -12,7 +12,7 @@ public interface BoardService {
 
 	public void write(BoardRequestDto d);
 
-	public void modify(int no, String text, String writer);
+	public void modify(int no, BoardRequestDto requestDto);
 
 	public void delete(int no, String writer);
 

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context>
-    <!-- 웹앱 우선 로딩: 부모(Tomcat) 클래스패스보다 WEB-INF/lib를 우선 사용 -->
-    <Loader delegate="false"/>
-</Context>
-
-

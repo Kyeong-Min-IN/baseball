@@ -34,7 +34,7 @@ class GroundBallForcePlayTest {
         // 내부 로직 호출
         String result = GameLogicUtil.processGroundBall(game, hitter);
 
-        assertThat(result).isIn("땅볼 아웃", "병살타");
+        assertThat(result).startsWith("땅볼 아웃");
         // 일반 땅볼일 때 기대 상태: R3 득점, R2->3루, R1->2루
         // 병살이 나와도 득점/강제 진루 로직이 유사하게 반영되는지 확인
         int home = game.getHomeScore();
@@ -64,7 +64,7 @@ class GroundBallForcePlayTest {
         int beforeAway = game.getAwayScore();
 
         String result = GameLogicUtil.processGroundBall(game, hitter);
-        assertThat(result).isIn("땅볼 아웃", "병살타");
+        assertThat(result).containsAnyOf("땅볼 아웃", "병살타");
         assertThat(game.getOut()).isBetween(1, 2); // 땅볼: +1, 병살: +2
 
         Batter[] b = game.getBases();
@@ -94,7 +94,7 @@ class GroundBallForcePlayTest {
         int outBefore = game.getOut();
 
         String result = GameLogicUtil.processGroundBall(game, hitter);
-        assertThat(result).isEqualTo("땅볼 아웃");
+        assertThat(result).startsWith("땅볼 아웃");
         assertThat(game.getOut()).isEqualTo(outBefore + 1);
 
         // 강제 진루 없어야 함

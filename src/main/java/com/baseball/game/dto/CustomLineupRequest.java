@@ -13,6 +13,6 @@ public class CustomLineupRequest {
     public static class LineupPosition {
         private Integer position; // 타순 (1~9)
         private String playerName;
-        private Integer playerId;
+        private Integer playerNo;
     }
 }

@@ -24,10 +24,12 @@ public class LoginController {
         this.service = service;
     }
 
-    // 로그인
-    @PostMapping("/login")
+    // 로그인 (Spring Security의 loginProcessingUrl과 일치하도록 경로 수정)
+    @PostMapping
     public Map<String, Object> login(@RequestBody MemberDto memberDto) {
-        // 모든 검증 및 로직을 서비스로 위임
+        // Spring Security가 인증을 처리하므로, 여기서는 추가적인 로직이 필요할 때만 사용
+        // 현재는 Spring Security의 successHandler/failureHandler가 응답을 처리
+        logger.info("LoginController: 로그인 요청 수신 - {}", memberDto.getId());
         return service.loginProcess(memberDto);
     }
 

@@ -1,0 +1,53 @@
+# Spring Boot Application Properties
+
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    session:
+      store-type: redis
+      timeout: 30m
+
+# Database configuration (H2 for local/test environment)
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:./baseball_db} # H2 기본값
+    driverClassName: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.h2.Driver} # H2 드라이버
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect # H2 Dialect
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always # H2는 시작 시마다 초기화
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  mybatis:
+    mapper-locations: classpath:com/baseball/game/mapper/*.xml
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost} # 기본값은 localhost, EKS에서는 ElastiCache 호스트로 오버라이드
+    port: ${SPRING_REDIS_PORT:6379}
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0 
+  logging:
+    level:
+      com.baseball.game: INFO # 애플리케이션 패키지 로그 레벨 DEBUG
+      org.springframework.data.redis: WARN
+      org.springframework.security: DEBUG # Spring Security 로그 레벨 DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics # 헬스 체크 엔드포인트 활성화
+
+# Other configurations can be added here

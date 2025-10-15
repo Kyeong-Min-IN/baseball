@@ -1,27 +1,28 @@
 // GamePage.js
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { gameAPI } from "../api/api";
 import Scoreboard from "./Scoreboard";
 import Scoreboard22 from "./Scoreboard22";
 import StrikeZoneContainer from "./StrikeZoneContainer";
 import Bases from "./Bases";
-import { PitchGauge, SwingGauge } from "./PitchGauge";
+
 import MessageBox from "./MessageBox";
+
 import "../styles/GamePage.css";
 
 const GamePage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  // 로컬스토리지 또는 state에서 게임 정보 가져오기
-  const savedGameInfo = JSON.parse(localStorage.getItem("gameInfo") || "{}");
-  const { gameId, userTeam, homeTeam, awayTeam, inningCount } =
-    state || savedGameInfo || {};
+  // 로컬 스토리지에서 자동으로 불러오는 로직 제거
+  const gameInfo = state || {};
+  const { gameId, homeTeam, awayTeam, inningCount, userTeam, lineups } = gameInfo;
 
-  useEffect(() => {
-    if (state) localStorage.setItem("gameInfo", JSON.stringify(state));
-  }, [state]);
+  // 페이지 로드 시, 전달된 state가 있으면 localStorage에 저장하는 로직 제거
+  // useEffect(() => {
+  //   if (state) localStorage.setItem("gameInfo", JSON.stringify(state));
+  // }, [state]);
 
   useEffect(() => {
     if (!gameId) navigate("/game/setup");
@@ -60,7 +61,7 @@ const GamePage = () => {
 
   // ===== 메시지 & 게이지 상태 =====
   const [message, setMessage] = useState("");
-  const [pitchGauge, setPitchGauge] = useState(0);
+
   const [swingGauge, setSwingGauge] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [currentType, setCurrentType] = useState(null);
@@ -131,8 +132,10 @@ const GamePage = () => {
     setMessage(parsed || "타석 결과");
   };
 
+  const intervalRef = useRef(null);
+
   // ===== 게임 상태 fetch =====
-  const fetchGameState = async () => {
+  const fetchGameState = useCallback(async () => {
     if (!gameId) return;
     try {
       const res = await gameAPI.getGameView(gameId);
@@ -164,15 +167,20 @@ const GamePage = () => {
       }));
     } catch (err) {
       console.error("게임 상태 로딩 실패:", err);
+      if (err.response && err.response.status === 404) {
+        clearInterval(intervalRef.current); // 반복 중단
+        alert("종료되었거나 유효하지 않은 게임입니다. 메인 화면으로 이동합니다.");
+        navigate('/'); // 메인으로 이동
+      }
     }
-  };
+  }, [gameId, navigate]);
 
   useEffect(() => {
     if (!gameId) return;
     fetchGameState();
-    const interval = setInterval(fetchGameState, 5000);
-    return () => clearInterval(interval);
-  }, [gameId]);
+    intervalRef.current = setInterval(fetchGameState, 5000);
+    return () => clearInterval(intervalRef.current);
+  }, [gameId, navigate, fetchGameState]);
 
   // ===== 이닝별 점수 계산 =====
   const inningScores = useMemo(() => {
@@ -263,7 +271,7 @@ const GamePage = () => {
             gameState={{ ...gameState, score: inningScores }}
             homeTeam={homeTeam}
             awayTeam={awayTeam}
-            lineups={{}}
+            lineups={lineups}
             inningCount={gameState.inningCount}
           />
           <Scoreboard22

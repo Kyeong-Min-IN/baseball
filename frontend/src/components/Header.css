@@ -9,6 +9,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+  /* 텍스트 선택 방지 */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 
 /* 내부 nav 영역 - 그리드 사용 */
@@ -20,6 +26,18 @@
   align-items: center;
   padding: 0 20px;
   color: white;
+  /* 텍스트 선택 방지 */
+  user-select: none;
+  cursor: default;
+}
+
+/* 헤더 내 모든 요소에 텍스트 선택 방지 적용 */
+.header-container * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 }
 
 /* 로고 (왼쪽 정렬) */
@@ -29,6 +47,7 @@
   font-weight: bold;
   text-decoration: none;
   color: white;
+  cursor: pointer !important; /* 링크이므로 포인터 커서 유지 */
 }
 
 /* 메뉴 링크 (가운데 정렬) */
@@ -43,7 +62,8 @@
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.2s ease;
-  font-family: "Noto Sans KR", sans-serif; 
+  font-family: "Noto Sans KR", sans-serif;
+  cursor: pointer !important; /* 링크이므로 포인터 커서 유지 */
 }
 
 .header-nav-link:hover {
@@ -69,7 +89,7 @@
   border-radius: 4px;
   color: white;
   padding: 5px 10px;
-  cursor: pointer;
+  cursor: pointer !important; /* 버튼이므로 포인터 커서 유지 */
   font-size: 0.85rem;
 }
 

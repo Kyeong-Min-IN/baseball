@@ -19,22 +19,22 @@ const Header = ({ userId, setUserId }) => {
   };
 
   return (
-    <header className="header-container">
-      <nav className="header-nav">
-        {/* 왼쪽 로고 */}
-        <Link to="/" className="header-logo">⚾</Link>
+      <header className="header-container">
+        <nav className="header-nav">
+          {/* 왼쪽 로고 */}
+          <Link to="/" className="header-logo">⚾</Link>
 
-        {/* 가운데 메뉴 */}
-        <div className="header-nav-links">
-          <Link to="/kboboard" className="header-nav-link">게시판</Link>
-          <Link to="/kbo" className="header-nav-link">KBO</Link>
-          <Link to="/game/game" className="header-nav-link">게임</Link>
-        </div>
+          {/* 가운데 메뉴 */}
+          <div className="header-nav-links">
+            <Link to="/kboboard" className="header-nav-link">게시판</Link>
+            <Link to="/kbo" className="header-nav-link">KBO</Link>
+            <Link to="/game/game" className="header-nav-link">게임</Link>
+          </div>
 
-  {/* 오른쪽 유저 영역 */}
- 
-</nav>
-    </header>
+          {/* 오른쪽 유저 영역 */}
+
+        </nav>
+      </header>
   );
 };
 

@@ -1,9 +1,9 @@
 // src/pages/PostFormWithComments.js
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api/api";
 import { AuthContext } from "../context/AuthContext";
-import "../styles/PostFormWithComments.css";
+import "../styles/PostForm2.css";
 
 const categoryMap = {
   general: 1,
@@ -33,10 +33,11 @@ const PostFormWithComments = () => {
       navigate("/login");
       return;
     }
-    setWriter(user.Id);
+    setWriter(user?.id || '');
 
-    const savedDraft = localStorage.getItem(draftKey);
-    if (savedDraft) setForm(prev => ({ ...prev, ...JSON.parse(savedDraft) }));
+    // Removed draft loading to ensure blank form on new post
+    // const savedDraft = localStorage.getItem(draftKey);
+    // if (savedDraft) setForm(prev => ({ ...prev, ...JSON.parse(savedDraft) }));
 
     if (isEdit) fetchPost(id);
   }, [id, isEdit, navigate, user]);
@@ -44,7 +45,7 @@ const PostFormWithComments = () => {
   const fetchPost = async (postId) => {
     try {
       setLoading(true);
-      const res = await axios.get(`/api/board/${postId}`);
+      const res = await api.get(`/board/${postId}`);
       const board = res.data.board;
       setForm({
         title: board.title || "",
@@ -74,18 +75,21 @@ const PostFormWithComments = () => {
   };
 
   const savePost = async () => {
-    if (!user) { alert("로그인이 필요합니다."); return; }
+    if (!user || !user.id) { 
+      alert("로그인이 필요하거나 사용자 정보가 유효하지 않습니다.");
+      return;
+    }
     const { title, text, category } = form;
     if (!title.trim() || !text.trim()) { alert("제목과 내용을 입력해주세요."); return; }
 
-    const requestData = { writer: user.Id, title: title.trim(), text: text.trim(), category: categoryMap[category] };
+    const requestData = { writer: user.id, title: title.trim(), text: text.trim(), category: categoryMap[category] };
     try {
       setLoading(true);
       if (isEdit) {
-        await axios.put(`/api/board/${id}`, requestData);
+        await api.put(`/board/${id}`, requestData);
         alert("글이 수정되었습니다.");
       } else {
-        await axios.post("/api/board", requestData);
+        await api.post("/board", requestData);
         alert("글이 등록되었습니다.");
         setForm({ title: "", text: "", category: "general" });
       }
@@ -102,7 +106,7 @@ const PostFormWithComments = () => {
     if (!newComment.trim()) return;
     if (!user) { alert("로그인 후 작성 가능합니다."); return; }
     try {
-      const res = await axios.post(`/api/board/${id}/comments`, { writer: parseInt(user.Id, 10), text: newComment.trim() });
+      const res = await api.post(`/board/${id}/comments`, { writer: parseInt(user.id, 10), text: newComment.trim() });
       setComments(prev => [...prev, res.data]);
       setNewComment("");
     } catch (err) {
@@ -113,10 +117,10 @@ const PostFormWithComments = () => {
 
   // 댓글 삭제
   const deleteComment = async (commentId, commentWriter) => {
-    if (!user || parseInt(user.Id, 10) !== commentWriter) { alert("자신의 댓글만 삭제할 수 있습니다."); return; }
+    if (!user || parseInt(user.id, 10) !== commentWriter) { alert("자신의 댓글만 삭제할 수 있습니다."); return; }
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/board/${id}/comments/${commentId}`);
+      await api.delete(`/board/${id}/comments/${commentId}`);
       setComments(prev => prev.filter(c => c.id !== commentId));
     } catch (err) {
       console.error(err);
@@ -125,119 +129,44 @@ const PostFormWithComments = () => {
   };
 
   return (
-    <div className="post-form-container">
-      <div className="post-form-header">
-        <h1 className="post-form-title">{isEdit ? "글 수정" : "글쓰기"}</h1>
-        <p className="post-form-subtitle">자유롭게 의견을 나누어보세요</p>
-      </div>
-      
-      <div className="post-form-content">
-        {loading && <div className="loading-message">로딩 중...</div>}
-        
-        <div className="form-section">
-          <div className="form-group">
-            <label className="form-label">제목</label>
-            <input 
-              type="text" 
-              name="title" 
-              value={form.title} 
-              onChange={handleChange} 
-              placeholder="제목을 입력하세요" 
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label className="form-label">작성자</label>
-            <input 
-              type="text" 
-              value={writer} 
-              readOnly 
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label className="form-label">카테고리</label>
-            <select 
-              name="category" 
-              value={form.category} 
-              onChange={handleChange}
-              className="form-select"
-            >
-              <option value="general">자유</option>
-              <option value="kbo">KBO</option>
-              <option value="NPB">NPB</option>
-              <option value="mlb">MLB</option>
-              <option value="amateur">사회인야구</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label className="form-label">내용</label>
-            <textarea 
-              name="text" 
-              value={form.text} 
-              onChange={handleChange} 
-              rows={10} 
-              placeholder="내용을 입력하세요" 
-              className="form-textarea"
-            />
-          </div>
-        </div>
-        
-        <div className="form-button-group">
-          <button 
-            onClick={savePost} 
-            disabled={loading}
-            className="form-button form-button-primary"
-          >
-            {loading ? "저장 중..." : (isEdit ? "수정" : "저장")}
-          </button>
-          <button 
-            onClick={() => { 
-              if (window.confirm("취소하면 임시 저장이 삭제됩니다.")) { 
-                localStorage.removeItem(draftKey); 
-                navigate("/kboBoard"); 
-              }
-            }} 
-            disabled={loading}
-            className="form-button form-button-secondary"
-          >
-            취소
-          </button>
+    <div className="container">
+      <div className="input-group">
+        <h2 style={{ textAlign: "center" }}>{isEdit ? "글 수정" : "글쓰기"}</h2>
+        {loading && <p>로딩 중...</p>}
+        <input type="text" name="title" value={form.title} onChange={handleChange} placeholder="제목" />
+        <span>작성자</span>
+        <input type="text" value={writer} readOnly />
+        <label>
+          종류{" "}
+          <select name="category" value={form.category} onChange={handleChange}>
+            <option value="general">자유</option>
+            <option value="kbo">KBO</option>
+            <option value="NPB">NPB</option>
+            <option value="mlb">MLB</option>
+            <option value="amateur">사회인야구</option>
+          </select>
+        </label>
+        <textarea name="text" value={form.text} onChange={handleChange} rows={10} placeholder="내용" style={{ resize: "vertical" }} />
+        <div className="button-group">
+          <button onClick={savePost} disabled={loading}>{isEdit ? "수정" : "저장"}</button>
+          <button onClick={() => { if (window.confirm("취소하면 임시 저장이 삭제됩니다.")) { localStorage.removeItem(draftKey); navigate("/kboBoard"); }}} disabled={loading}>취소</button>
         </div>
 
         {/* 댓글 */}
         {isEdit && (
           <div className="comments-section">
-            <h3 className="comments-title">댓글</h3>
+            <h3>댓글</h3>
             <div className="new-comment">
-              <textarea 
-                value={newComment} 
-                onChange={(e) => setNewComment(e.target.value)} 
-                rows={3} 
-                placeholder="댓글을 입력하세요" 
-              />
+              <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} rows={3} placeholder="댓글을 입력하세요" />
               <button onClick={addComment}>작성</button>
             </div>
             <div className="comment-list">
               {comments.map((c) => (
                 <div key={c.id} className="comment-item">
-                  <p className="comment-text">{c.text}</p>
-                  <div className="comment-meta">
-                    <span className="comment-writer">{c.writer}</span>
-                    <span className="comment-date">{c.createdAt}</span>
-                  </div>
-                  {user && parseInt(user.Id, 10) === c.writer && (
-                    <div className="comment-actions">
-                      <button 
-                        onClick={() => deleteComment(c.id, c.writer)}
-                        className="comment-button comment-button-delete"
-                      >
-                        삭제
-                      </button>
-                    </div>
+                  <p>{c.text}</p>
+                  <small>{c.writer} | {c.createdAt}</small>
+                  {user && parseInt(user.id, 10) === c.writer && (
+                    <button onClick={() => deleteComment(c.id, c.writer)}>삭제</button>
                   )}
                 </div>
               ))}
